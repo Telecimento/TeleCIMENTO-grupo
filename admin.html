@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telecimento - Opiniômetro</title>
+    <title>Telecimento - Painel Administrativo</title>
     <style>
         * {
             margin: 0;
@@ -20,36 +20,23 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
         .header {
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
-        .logo {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #ffd700;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-
-        .subtitle {
-            font-size: 1.2rem;
-            color: #cccccc;
-            margin-bottom: 20px;
-        }
-
-        .admin-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #ffd700;
-            color: #1a1a1a;
-            padding: 10px 20px;
+        .back-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
             border: none;
             border-radius: 25px;
             font-weight: bold;
@@ -59,94 +46,84 @@
             display: inline-block;
         }
 
-        .admin-btn:hover {
-            background: #ffed4e;
+        .back-btn:hover {
+            background: #45a049;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
         }
 
-        .admin-login {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
+        .title-section {
+            text-align: center;
+            flex: 1;
         }
 
-        .admin-login.show {
-            display: flex;
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
 
-        .login-modal {
+        .subtitle {
+            color: #cccccc;
+            font-size: 1.1rem;
+        }
+
+        .success-message {
+            background: #4CAF50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: bold;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 400px;
-            width: 90%;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
         }
 
-        .login-title {
-            font-size: 1.8rem;
-            color: #ffd700;
-            text-align: center;
-            margin-bottom: 30px;
+        .stat-card:hover {
+            transform: translateY(-5px);
         }
 
-        .login-input {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            padding: 15px;
-            color: #ffffff;
-            font-size: 1rem;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .login-input:focus {
-            outline: none;
-            border-color: #ffd700;
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .login-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .login-btn, .cancel-btn {
-            flex: 1;
-            padding: 15px;
-            border: none;
-            border-radius: 10px;
+        .stat-number {
+            font-size: 3rem;
             font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            color: #ffd700;
+            margin-bottom: 10px;
         }
 
-        .login-btn {
-            background: linear-gradient(45deg, #ffd700, #ffed4e);
-            color: #1a1a1a;
+        .stat-label {
+            color: #cccccc;
+            font-size: 1.1rem;
         }
 
-        .cancel-btn {
-            background: #666666;
-            color: #ffffff;
+        .satisfaction-rate {
+            color: #4CAF50;
         }
 
-        .login-btn:hover, .cancel-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .evaluation-section {
+        .section {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             padding: 30px;
@@ -156,223 +133,127 @@
         }
 
         .section-title {
-            font-size: 2rem;
+            font-size: 1.8rem;
             color: #ffd700;
-            text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .section-subtitle {
-            text-align: center;
-            color: #cccccc;
-            margin-bottom: 30px;
-            font-size: 1.1rem;
-        }
-
-        .rating-grid {
+        .sectors-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
-            margin-bottom: 30px;
         }
 
-        .rating-card {
+        .sector-card {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
             padding: 20px;
             text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
         }
 
-        .rating-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.1);
-            border-color: #ffd700;
-        }
-
-        .rating-card.selected {
-            background: rgba(255, 215, 0, 0.2);
-            border-color: #ffd700;
-            transform: translateY(-5px);
-        }
-
-        .rating-emoji {
-            font-size: 4rem;
+        .sector-icon {
+            font-size: 2rem;
             margin-bottom: 10px;
-            display: block;
-        }
-
-        .rating-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .rating-description {
-            color: #cccccc;
-            font-size: 0.9rem;
-        }
-
-        .sector-section {
-            margin-top: 40px;
-        }
-
-        .sector-title {
-            font-size: 1.8rem;
-            color: #ffd700;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .sector-group {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
         }
 
         .sector-name {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
-            margin-bottom: 15px;
-            color: #ffd700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .sector-ratings {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 15px;
-        }
-
-        .sector-rating-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid transparent;
-            border-radius: 10px;
-            padding: 15px 10px;
-            color: #ffffff;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-            font-weight: bold;
-        }
-
-        .sector-rating-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: #ffd700;
-        }
-
-        .sector-rating-btn.selected {
-            background: rgba(255, 215, 0, 0.2);
-            border-color: #ffd700;
-            color: #ffd700;
-        }
-
-        .feedback-section {
-            margin-top: 40px;
-        }
-
-        .feedback-title {
-            font-size: 1.5rem;
             color: #ffd700;
             margin-bottom: 10px;
         }
 
-        .feedback-subtitle {
-            color: #cccccc;
-            margin-bottom: 20px;
-            font-style: italic;
-        }
-
-        .feedback-textarea {
-            width: 100%;
-            min-height: 120px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            padding: 15px;
+        .sector-rating {
+            font-size: 2rem;
+            font-weight: bold;
             color: #ffffff;
-            font-size: 1rem;
-            resize: vertical;
-            transition: all 0.3s ease;
         }
 
-        .feedback-textarea:focus {
-            outline: none;
-            border-color: #ffd700;
-            background: rgba(255, 255, 255, 0.15);
+        .evaluations-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
 
-        .feedback-textarea::placeholder {
-            color: #888888;
+        .evaluations-table th,
+        .evaluations-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .submit-section {
+        .evaluations-table th {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .evaluations-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .rating-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
             text-align: center;
-            margin-top: 40px;
+            min-width: 70px;
+            display: inline-block;
         }
 
-        .submit-btn {
-            background: linear-gradient(45deg, #ffd700, #ffed4e);
-            color: #1a1a1a;
+        .rating-excellent { background: #4CAF50; color: white; }
+        .rating-good { background: #8BC34A; color: white; }
+        .rating-regular { background: #FF9800; color: white; }
+        .rating-bad { background: #f44336; color: white; }
+
+        .controls-section {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .control-btn {
+            padding: 15px 30px;
             border: none;
-            border-radius: 50px;
-            padding: 15px 40px;
-            font-size: 1.2rem;
+            border-radius: 25px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            font-size: 1rem;
+            min-width: 180px;
         }
 
-        .submit-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+        .reset-btn {
+            background: #4CAF50;
+            color: white;
         }
 
-        .submit-btn:disabled {
-            background: #666666;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
+        .delete-btn {
+            background: #f44336;
+            color: white;
         }
 
-        .contact-section {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 25px;
-            margin-top: 40px;
+        .refresh-btn {
+            background: #ffd700;
+            color: #1a1a1a;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .no-data {
             text-align: center;
-        }
-
-        .contact-title {
-            font-size: 1.5rem;
-            color: #ffd700;
-            margin-bottom: 20px;
-        }
-
-        .contact-info {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #cccccc;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .contact-item:hover {
-            color: #ffd700;
+            color: #888888;
+            font-style: italic;
+            padding: 40px;
         }
 
         .message {
@@ -398,154 +279,143 @@
             color: white;
         }
 
+        .message.info {
+            background: #2196F3;
+            color: white;
+        }
+
         .message.show {
             opacity: 1;
         }
 
+        .table-container {
+            overflow-x: auto;
+        }
+
         @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+
             .logo {
                 font-size: 2rem;
             }
 
-            .rating-grid {
+            .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .sector-ratings {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .contact-info {
+            .controls-section {
                 flex-direction: column;
-                gap: 15px;
+                align-items: center;
             }
 
-            .admin-btn {
-                position: relative;
-                top: auto;
-                right: auto;
-                margin-bottom: 20px;
+            .control-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .evaluations-table {
+                font-size: 0.9rem;
+            }
+
+            .evaluations-table th,
+            .evaluations-table td {
+                padding: 8px 4px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <button class="admin-btn" onclick="showAdminLogin()">⚙️ Área do Administrador</button>
-        
         <div class="header">
-            <div class="logo">TeleCIMENTO</div>
-            <div class="subtitle">Avalie nosso atendimento e nos ajude a melhorar cada vez mais</div>
+            <a href="index.html" class="back-btn">← Voltar ao Opiniômetro</a>
+            <div class="title-section">
+                <div class="logo">TeleCIMENTO</div>
+                <div class="subtitle">Painel Administrativo - Sistema de Opiniômetro</div>
+            </div>
         </div>
 
-        <div class="evaluation-section">
-            <div class="section-title">OPINIÔMETRO</div>
-            <div class="section-subtitle">Como você avalia nosso atendimento hoje? Sua opinião é muito importante para nós!</div>
-            
-            <div class="rating-grid" id="generalRating">
-                <div class="rating-card" data-value="1">
-                    <span class="rating-emoji">😞</span>
-                    <div class="rating-title">RUIM</div>
-                    <div class="rating-description">Não atendeu expectativas</div>
+        <div class="success-message">
+            Acesso liberado! Bem-vindo ao painel administrativo.
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalEvaluations">0</div>
+                <div class="stat-label">Total de Avaliações</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="positiveEvaluations">0</div>
+                <div class="stat-label">Avaliações Positivas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="negativeEvaluations">0</div>
+                <div class="stat-label">Avaliações Negativas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number satisfaction-rate" id="satisfactionRate">0%</div>
+                <div class="stat-label">Taxa de Satisfação</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">📊 Análise por Setores</div>
+            <div class="sectors-grid" id="sectorsGrid">
+                <div class="sector-card">
+                    <div class="sector-icon">🛒</div>
+                    <div class="sector-name">Vendas</div>
+                    <div class="sector-rating" id="vendasRating">-</div>
                 </div>
-                <div class="rating-card" data-value="2">
-                    <span class="rating-emoji">😐</span>
-                    <div class="rating-title">REGULAR</div>
-                    <div class="rating-description">Atendimento básico</div>
+                <div class="sector-card">
+                    <div class="sector-icon">💰</div>
+                    <div class="sector-name">Caixa</div>
+                    <div class="sector-rating" id="caixaRating">-</div>
                 </div>
-                <div class="rating-card" data-value="3">
-                    <span class="rating-emoji">😊</span>
-                    <div class="rating-title">BOM</div>
-                    <div class="rating-description">Atendimento satisfatório</div>
-                </div>
-                <div class="rating-card" data-value="4">
-                    <span class="rating-emoji">🤩</span>
-                    <div class="rating-title">EXCELENTE</div>
-                    <div class="rating-description">Superou expectativas</div>
+                <div class="sector-card">
+                    <div class="sector-icon">🚚</div>
+                    <div class="sector-name">Expedição</div>
+                    <div class="sector-rating" id="expedicaoRating">-</div>
                 </div>
             </div>
         </div>
 
-        <div class="evaluation-section sector-section">
-            <div class="sector-title">Avalie nossos setores</div>
-            
-            <div class="sector-group">
-                <div class="sector-name">🛒 VENDAS</div>
-                <div class="sector-ratings" id="vendasRating">
-                    <button class="sector-rating-btn" data-value="1">Ruim</button>
-                    <button class="sector-rating-btn" data-value="2">Regular</button>
-                    <button class="sector-rating-btn" data-value="3">Bom</button>
-                    <button class="sector-rating-btn" data-value="4">Excelente</button>
-                </div>
-            </div>
-
-            <div class="sector-group">
-                <div class="sector-name">💰 CAIXA</div>
-                <div class="sector-ratings" id="caixaRating">
-                    <button class="sector-rating-btn" data-value="1">Ruim</button>
-                    <button class="sector-rating-btn" data-value="2">Regular</button>
-                    <button class="sector-rating-btn" data-value="3">Bom</button>
-                    <button class="sector-rating-btn" data-value="4">Excelente</button>
-                </div>
-            </div>
-
-            <div class="sector-group">
-                <div class="sector-name">🚚 EXPEDIÇÃO</div>
-                <div class="sector-ratings" id="expedicaoRating">
-                    <button class="sector-rating-btn" data-value="1">Ruim</button>
-                    <button class="sector-rating-btn" data-value="2">Regular</button>
-                    <button class="sector-rating-btn" data-value="3">Bom</button>
-                    <button class="sector-rating-btn" data-value="4">Excelente</button>
-                </div>
+        <div class="section">
+            <div class="section-title">📋 Todas as Avaliações</div>
+            <div class="table-container">
+                <table class="evaluations-table" id="evaluationsTable">
+                    <thead>
+                        <tr>
+                            <th>Data/Hora</th>
+                            <th>Avaliação Geral</th>
+                            <th>Vendas</th>
+                            <th>Caixa</th>
+                            <th>Expedição</th>
+                            <th>Feedback</th>
+                        </tr>
+                    </thead>
+                    <tbody id="evaluationsTableBody">
+                        <tr>
+                            <td colspan="6" class="no-data">Nenhuma avaliação encontrada</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <div class="evaluation-section feedback-section">
-            <div class="feedback-title">Conte-nos mais sobre sua experiência</div>
-            <div class="feedback-subtitle">(Opcional) Relate melhorias ou situações que gostaria de compartilhar</div>
-            <textarea 
-                class="feedback-textarea" 
-                id="feedbackText"
-                placeholder="Descreva sua experiência, sugestões de melhoria ou relate alguma situação específica..."
-                maxlength="1000">
-            </textarea>
-        </div>
-
-        <div class="submit-section">
-            <button class="submit-btn" id="submitBtn" onclick="submitEvaluation()">
-                ✈️ Enviar Avaliação
-            </button>
-        </div>
-
-        <div class="contact-section">
-            <div class="contact-title">Entre em contato conosco</div>
-            <div class="contact-info">
-                <a href="https://instagram.com/grupotelecimento" class="contact-item" target="_blank">
-                    📷 Instagram @grupotelecimento
-                </a>
-                <div class="contact-item">
-                    📍 Endereço: Av. Manoel Caribe Filho, 3325 - Canelas, Montes Claros
-                </div>
-                <a href="https://wa.me/5538932121823" class="contact-item" target="_blank">
-                    📱 WhatsApp: (38) 9 3212-1823
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de Login do Administrador -->
-    <div class="admin-login" id="adminLogin">
-        <div class="login-modal">
-            <div class="login-title">🔐 Acesso Administrativo</div>
-            <input 
-                type="password" 
-                class="login-input" 
-                id="adminPassword" 
-                placeholder="Digite a senha de administrador"
-            >
-            <div class="login-buttons">
-                <button class="login-btn" onclick="checkAdminPassword()">Entrar</button>
-                <button class="cancel-btn" onclick="hideAdminLogin()">Cancelar</button>
+        <div class="section">
+            <div class="section-title">⚙️ Controles Administrativos</div>
+            <div class="controls-section">
+                <button class="control-btn reset-btn" onclick="resetVotations()">
+                    🔄 Resetar Votação
+                </button>
+                <button class="control-btn delete-btn" onclick="deleteAllData()">
+                    🗑️ Apagar Todos os Dados
+                </button>
+                <button class="control-btn refresh-btn" onclick="refreshData()">
+                    🔃 Atualizar Dados
+                </button>
             </div>
         </div>
     </div>
@@ -553,53 +423,6 @@
     <div class="message" id="message"></div>
 
     <script>
-        let selectedRatings = {
-            geral: null,
-            vendas: null,
-            caixa: null,
-            expedicao: null
-        };
-
-        // Configurar seleção de avaliação geral
-        document.getElementById('generalRating').addEventListener('click', function(e) {
-            const card = e.target.closest('.rating-card');
-            if (card) {
-                // Remove seleção anterior
-                document.querySelectorAll('#generalRating .rating-card').forEach(c => c.classList.remove('selected'));
-                // Adiciona seleção atual
-                card.classList.add('selected');
-                selectedRatings.geral = parseInt(card.dataset.value);
-                updateSubmitButton();
-            }
-        });
-
-        // Configurar seleção de avaliação por setores
-        function setupSectorRating(sectorId, ratingKey) {
-            document.getElementById(sectorId).addEventListener('click', function(e) {
-                const btn = e.target.closest('.sector-rating-btn');
-                if (btn) {
-                    // Remove seleção anterior no setor
-                    document.querySelectorAll(`#${sectorId} .sector-rating-btn`).forEach(b => b.classList.remove('selected'));
-                    // Adiciona seleção atual
-                    btn.classList.add('selected');
-                    selectedRatings[ratingKey] = parseInt(btn.dataset.value);
-                }
-            });
-        }
-
-        setupSectorRating('vendasRating', 'vendas');
-        setupSectorRating('caixaRating', 'caixa');
-        setupSectorRating('expedicaoRating', 'expedicao');
-
-        function updateSubmitButton() {
-            const submitBtn = document.getElementById('submitBtn');
-            if (selectedRatings.geral) {
-                submitBtn.disabled = false;
-            } else {
-                submitBtn.disabled = true;
-            }
-        }
-
         function showMessage(text, type) {
             const messageEl = document.getElementById('message');
             messageEl.textContent = text;
@@ -611,117 +434,137 @@
             }, 4000);
         }
 
-        function generateDeviceId() {
-            let deviceId = localStorage.getItem('telecimento_device_id');
-            if (!deviceId) {
-                deviceId = 'device_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                localStorage.setItem('telecimento_device_id', deviceId);
-            }
-            return deviceId;
-        }
-
-        function canVote() {
-            const deviceId = generateDeviceId();
-            const lastVote = localStorage.getItem('telecimento_last_vote_' + deviceId);
+        function getRatingBadge(value) {
+            if (!value) return '<span class="rating-badge">-</span>';
             
-            if (!lastVote) return true;
-            
-            const lastVoteTime = new Date(lastVote);
-            const now = new Date();
-            const hoursDiff = (now - lastVoteTime) / (1000 * 60 * 60);
-            
-            return hoursDiff >= 24;
-        }
-
-        function submitEvaluation() {
-            if (!selectedRatings.geral) {
-                showMessage('Por favor, selecione uma avaliação geral antes de enviar.', 'error');
-                return;
-            }
-
-            if (!canVote()) {
-                showMessage('Você já avaliou nas últimas 24 horas. Tente novamente mais tarde.', 'error');
-                return;
-            }
-
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Enviando...';
-
-            const deviceId = generateDeviceId();
-            const now = new Date();
-
-            const evaluationData = {
-                id: 'eval_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-                data_hora: now.toISOString(),
-                avaliacao_geral: selectedRatings.geral,
-                avaliacao_vendas: selectedRatings.vendas,
-                avaliacao_caixa: selectedRatings.caixa,
-                avaliacao_expedicao: selectedRatings.expedicao,
-                feedback_textual: document.getElementById('feedbackText').value.trim() || null,
-                dispositivo_id: deviceId
+            const ratings = {
+                1: { class: 'rating-bad', text: 'Ruim' },
+                2: { class: 'rating-regular', text: 'Regular' },
+                3: { class: 'rating-good', text: 'Bom' },
+                4: { class: 'rating-excellent', text: 'Excelente' }
             };
-
-            // Salvar avaliação no localStorage
-            let avaliacoes = JSON.parse(localStorage.getItem('telecimento_avaliacoes') || '[]');
-            avaliacoes.push(evaluationData);
-            localStorage.setItem('telecimento_avaliacoes', JSON.stringify(avaliacoes));
-
-            // Marcar último voto
-            localStorage.setItem('telecimento_last_vote_' + deviceId, now.toISOString());
-
-            showMessage('Avaliação enviada com sucesso! Obrigado pelo seu feedback.', 'success');
             
-            // Reset form
-            selectedRatings = { geral: null, vendas: null, caixa: null, expedicao: null };
-            document.querySelectorAll('.rating-card, .sector-rating-btn').forEach(el => el.classList.remove('selected'));
-            document.getElementById('feedbackText').value = '';
-            
-            submitBtn.disabled = false;
-            submitBtn.textContent = '✈️ Enviar Avaliação';
-            updateSubmitButton();
+            const rating = ratings[value];
+            return `<span class="rating-badge ${rating.class}">${rating.text}</span>`;
         }
 
-        function showAdminLogin() {
-            document.getElementById('adminLogin').classList.add('show');
-            document.getElementById('adminPassword').focus();
+        function formatDateTime(isoString) {
+            const date = new Date(isoString);
+            return date.toLocaleString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
         }
 
-        function hideAdminLogin() {
-            document.getElementById('adminLogin').classList.remove('show');
-            document.getElementById('adminPassword').value = '';
-        }
-
-        function checkAdminPassword() {
-            const password = document.getElementById('adminPassword').value;
+        function calculateSectorAverage(evaluations, sector) {
+            const validRatings = evaluations
+                .map(eval => eval[`avaliacao_${sector}`])
+                .filter(rating => rating !== null && rating !== undefined);
             
-            if (password === '@TELEcimento2025') {
-                showMessage('Acesso liberado! Redirecionando...', 'success');
-                setTimeout(() => {
-                    window.location.href = 'admin.html';
-                }, 1500);
+            if (validRatings.length === 0) return null;
+            
+            const sum = validRatings.reduce((acc, rating) => acc + rating, 0);
+            return (sum / validRatings.length).toFixed(1);
+        }
+
+        function loadData() {
+            const avaliacoes = JSON.parse(localStorage.getItem('telecimento_avaliacoes') || '[]');
+            
+            // Atualizar estatísticas gerais
+            const total = avaliacoes.length;
+            const positives = avaliacoes.filter(eval => eval.avaliacao_geral >= 3).length;
+            const negatives = avaliacoes.filter(eval => eval.avaliacao_geral <= 2).length;
+            const satisfactionRate = total > 0 ? Math.round((positives / total) * 100) : 0;
+            
+            document.getElementById('totalEvaluations').textContent = total;
+            document.getElementById('positiveEvaluations').textContent = positives;
+            document.getElementById('negativeEvaluations').textContent = negatives;
+            document.getElementById('satisfactionRate').textContent = satisfactionRate + '%';
+            
+            // Atualizar médias por setor
+            const vendasAvg = calculateSectorAverage(avaliacoes, 'vendas');
+            const caixaAvg = calculateSectorAverage(avaliacoes, 'caixa');
+            const expedicaoAvg = calculateSectorAverage(avaliacoes, 'expedicao');
+            
+            document.getElementById('vendasRating').textContent = vendasAvg || '-';
+            document.getElementById('caixaRating').textContent = caixaAvg || '-';
+            document.getElementById('expedicaoRating').textContent = expedicaoAvg || '-';
+            
+            // Atualizar tabela de avaliações
+            const tableBody = document.getElementById('evaluationsTableBody');
+            
+            if (avaliacoes.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" class="no-data">Nenhuma avaliação encontrada</td></tr>';
             } else {
-                showMessage('Acesso negado! Senha incorreta.', 'error');
-                document.getElementById('adminPassword').value = '';
+                // Ordenar por data (mais recentes primeiro)
+                const sortedEvaluations = avaliacoes.sort((a, b) => new Date(b.data_hora) - new Date(a.data_hora));
+                
+                tableBody.innerHTML = sortedEvaluations.map(eval => `
+                    <tr>
+                        <td>${formatDateTime(eval.data_hora)}</td>
+                        <td>${getRatingBadge(eval.avaliacao_geral)}</td>
+                        <td>${getRatingBadge(eval.avaliacao_vendas)}</td>
+                        <td>${getRatingBadge(eval.avaliacao_caixa)}</td>
+                        <td>${getRatingBadge(eval.avaliacao_expedicao)}</td>
+                        <td>${eval.feedback_textual || '-'}</td>
+                    </tr>
+                `).join('');
             }
         }
 
-        // Permitir login com Enter
-        document.getElementById('adminPassword').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkAdminPassword();
+        function resetVotations() {
+            if (confirm('Tem certeza que deseja resetar as votações? Isso permitirá que todos os dispositivos votem novamente, mas manterá os dados das avaliações.')) {
+                // Remove apenas os registros de último voto, mantendo as avaliações
+                const keys = Object.keys(localStorage);
+                keys.forEach(key => {
+                    if (key.startsWith('telecimento_last_vote_')) {
+                        localStorage.removeItem(key);
+                    }
+                });
+                
+                showMessage('Votações resetadas com sucesso! Todos os dispositivos podem votar novamente.', 'success');
             }
+        }
+
+        function deleteAllData() {
+            if (confirm('ATENÇÃO: Tem certeza que deseja apagar TODOS os dados? Esta ação não pode ser desfeita!')) {
+                if (confirm('Esta é sua última chance! Confirma que deseja apagar todas as avaliações permanentemente?')) {
+                    // Remove todas as avaliações e registros de votação
+                    localStorage.removeItem('telecimento_avaliacoes');
+                    const keys = Object.keys(localStorage);
+                    keys.forEach(key => {
+                        if (key.startsWith('telecimento_')) {
+                            localStorage.removeItem(key);
+                        }
+                    });
+                    
+                    loadData();
+                    showMessage('Todos os dados foram apagados com sucesso!', 'info');
+                }
+            }
+        }
+
+        function refreshData() {
+            showMessage('Atualizando dados...', 'info');
+            setTimeout(() => {
+                loadData();
+                showMessage('Dados atualizados com sucesso!', 'success');
+            }, 500);
+        }
+
+        // Carregar dados ao inicializar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            
+            // Atualizar dados automaticamente a cada 30 segundos
+            setInterval(loadData, 30000);
         });
 
-        // Fechar modal ao clicar fora
-        document.getElementById('adminLogin').addEventListener('click', function(e) {
-            if (e.target === this) {
-                hideAdminLogin();
-            }
-        });
-
-        // Inicializar estado do botão
-        updateSubmitButton();
+        // Atualizar dados quando a página ganha foco (usuário volta para a aba)
+        window.addEventListener('focus', loadData);
     </script>
 </body>
 </html>
