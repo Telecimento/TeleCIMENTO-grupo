@@ -65,6 +65,87 @@
             box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
         }
 
+        .admin-login {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .admin-login.show {
+            display: flex;
+        }
+
+        .login-modal {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .login-title {
+            font-size: 1.8rem;
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            color: #ffffff;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: #ffd700;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .login-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .login-btn, .cancel-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #1a1a1a;
+        }
+
+        .cancel-btn {
+            background: #666666;
+            color: #ffffff;
+        }
+
+        .login-btn:hover, .cancel-btn:hover {
+            transform: translateY(-2px);
+        }
+
         .evaluation-section {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 20px;
@@ -350,7 +431,7 @@
 </head>
 <body>
     <div class="container">
-        <a href="admin.html" class="admin-btn">⚙️ Área do Administrador</a>
+        <button class="admin-btn" onclick="showAdminLogin()">⚙️ Área do Administrador</button>
         
         <div class="header">
             <div class="logo">TeleCIMENTO</div>
@@ -452,6 +533,23 @@
         </div>
     </div>
 
+    <!-- Modal de Login do Administrador -->
+    <div class="admin-login" id="adminLogin">
+        <div class="login-modal">
+            <div class="login-title">🔐 Acesso Administrativo</div>
+            <input 
+                type="password" 
+                class="login-input" 
+                id="adminPassword" 
+                placeholder="Digite a senha de administrador"
+            >
+            <div class="login-buttons">
+                <button class="login-btn" onclick="checkAdminPassword()">Entrar</button>
+                <button class="cancel-btn" onclick="hideAdminLogin()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <div class="message" id="message"></div>
 
     <script>
@@ -513,9 +611,36 @@
             }, 4000);
         }
 
-        async function submitEvaluation() {
+        function generateDeviceId() {
+            let deviceId = localStorage.getItem('telecimento_device_id');
+            if (!deviceId) {
+                deviceId = 'device_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('telecimento_device_id', deviceId);
+            }
+            return deviceId;
+        }
+
+        function canVote() {
+            const deviceId = generateDeviceId();
+            const lastVote = localStorage.getItem('telecimento_last_vote_' + deviceId);
+            
+            if (!lastVote) return true;
+            
+            const lastVoteTime = new Date(lastVote);
+            const now = new Date();
+            const hoursDiff = (now - lastVoteTime) / (1000 * 60 * 60);
+            
+            return hoursDiff >= 24;
+        }
+
+        function submitEvaluation() {
             if (!selectedRatings.geral) {
                 showMessage('Por favor, selecione uma avaliação geral antes de enviar.', 'error');
+                return;
+            }
+
+            if (!canVote()) {
+                showMessage('Você já avaliou nas últimas 24 horas. Tente novamente mais tarde.', 'error');
                 return;
             }
 
@@ -523,49 +648,81 @@
             submitBtn.disabled = true;
             submitBtn.textContent = 'Enviando...';
 
+            const deviceId = generateDeviceId();
+            const now = new Date();
+
             const evaluationData = {
+                id: 'eval_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                data_hora: now.toISOString(),
                 avaliacao_geral: selectedRatings.geral,
                 avaliacao_vendas: selectedRatings.vendas,
                 avaliacao_caixa: selectedRatings.caixa,
                 avaliacao_expedicao: selectedRatings.expedicao,
-                feedback_textual: document.getElementById('feedbackText').value.trim() || null
+                feedback_textual: document.getElementById('feedbackText').value.trim() || null,
+                dispositivo_id: deviceId
             };
 
-            try {
-                const response = await fetch('/api/avaliar', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(evaluationData)
-                });
+            // Salvar avaliação no localStorage
+            let avaliacoes = JSON.parse(localStorage.getItem('telecimento_avaliacoes') || '[]');
+            avaliacoes.push(evaluationData);
+            localStorage.setItem('telecimento_avaliacoes', JSON.stringify(avaliacoes));
 
-                const result = await response.json();
+            // Marcar último voto
+            localStorage.setItem('telecimento_last_vote_' + deviceId, now.toISOString());
 
-                if (response.ok) {
-                    showMessage('Avaliação enviada com sucesso! Obrigado pelo seu feedback.', 'success');
-                    
-                    // Reset form
-                    selectedRatings = { geral: null, vendas: null, caixa: null, expedicao: null };
-                    document.querySelectorAll('.rating-card, .sector-rating-btn').forEach(el => el.classList.remove('selected'));
-                    document.getElementById('feedbackText').value = '';
-                    
-                } else {
-                    showMessage(result.error || 'Erro ao enviar avaliação. Tente novamente.', 'error');
-                }
-            } catch (error) {
-                showMessage('Erro de conexão. Verifique sua internet e tente novamente.', 'error');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = '✈️ Enviar Avaliação';
-                updateSubmitButton();
+            showMessage('Avaliação enviada com sucesso! Obrigado pelo seu feedback.', 'success');
+            
+            // Reset form
+            selectedRatings = { geral: null, vendas: null, caixa: null, expedicao: null };
+            document.querySelectorAll('.rating-card, .sector-rating-btn').forEach(el => el.classList.remove('selected'));
+            document.getElementById('feedbackText').value = '';
+            
+            submitBtn.disabled = false;
+            submitBtn.textContent = '✈️ Enviar Avaliação';
+            updateSubmitButton();
+        }
+
+        function showAdminLogin() {
+            document.getElementById('adminLogin').classList.add('show');
+            document.getElementById('adminPassword').focus();
+        }
+
+        function hideAdminLogin() {
+            document.getElementById('adminLogin').classList.remove('show');
+            document.getElementById('adminPassword').value = '';
+        }
+
+        function checkAdminPassword() {
+            const password = document.getElementById('adminPassword').value;
+            
+            if (password === '@TELEcimento2025') {
+                showMessage('Acesso liberado! Redirecionando...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 1500);
+            } else {
+                showMessage('Acesso negado! Senha incorreta.', 'error');
+                document.getElementById('adminPassword').value = '';
             }
         }
+
+        // Permitir login com Enter
+        document.getElementById('adminPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAdminPassword();
+            }
+        });
+
+        // Fechar modal ao clicar fora
+        document.getElementById('adminLogin').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideAdminLogin();
+            }
+        });
 
         // Inicializar estado do botão
         updateSubmitButton();
     </script>
 </body>
 </html>
-
 
