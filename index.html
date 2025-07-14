@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telecimento - Opiniômetro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #cccccc;
+            margin-bottom: 20px;
+        }
+
+        .admin-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #ffd700;
+            color: #1a1a1a;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .admin-btn:hover {
+            background: #ffed4e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
+        }
+
+        .evaluation-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #cccccc;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .rating-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .rating-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .rating-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #ffd700;
+        }
+
+        .rating-card.selected {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: #ffd700;
+            transform: translateY(-5px);
+        }
+
+        .rating-emoji {
+            font-size: 4rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .rating-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .rating-description {
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        .sector-section {
+            margin-top: 40px;
+        }
+
+        .sector-title {
+            font-size: 1.8rem;
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sector-group {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .sector-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #ffd700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sector-ratings {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+
+        .sector-rating-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 15px 10px;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .sector-rating-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #ffd700;
+        }
+
+        .sector-rating-btn.selected {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: #ffd700;
+            color: #ffd700;
+        }
+
+        .feedback-section {
+            margin-top: 40px;
+        }
+
+        .feedback-title {
+            font-size: 1.5rem;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .feedback-subtitle {
+            color: #cccccc;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .feedback-textarea {
+            width: 100%;
+            min-height: 120px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            color: #ffffff;
+            font-size: 1rem;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .feedback-textarea:focus {
+            outline: none;
+            border-color: #ffd700;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .feedback-textarea::placeholder {
+            color: #888888;
+        }
+
+        .submit-section {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #1a1a1a;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .submit-btn:disabled {
+            background: #666666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .contact-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .contact-title {
+            font-size: 1.5rem;
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #cccccc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-item:hover {
+            color: #ffd700;
+        }
+
+        .message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .message.success {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .message.error {
+            background: #f44336;
+            color: white;
+        }
+
+        .message.show {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2rem;
+            }
+
+            .rating-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .sector-ratings {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .contact-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .admin-btn {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="admin.html" class="admin-btn">⚙️ Área do Administrador</a>
+        
+        <div class="header">
+            <div class="logo">TeleCIMENTO</div>
+            <div class="subtitle">Avalie nosso atendimento e nos ajude a melhorar cada vez mais</div>
+        </div>
+
+        <div class="evaluation-section">
+            <div class="section-title">OPINIÔMETRO</div>
+            <div class="section-subtitle">Como você avalia nosso atendimento hoje? Sua opinião é muito importante para nós!</div>
+            
+            <div class="rating-grid" id="generalRating">
+                <div class="rating-card" data-value="1">
+                    <span class="rating-emoji">😞</span>
+                    <div class="rating-title">RUIM</div>
+                    <div class="rating-description">Não atendeu expectativas</div>
+                </div>
+                <div class="rating-card" data-value="2">
+                    <span class="rating-emoji">😐</span>
+                    <div class="rating-title">REGULAR</div>
+                    <div class="rating-description">Atendimento básico</div>
+                </div>
+                <div class="rating-card" data-value="3">
+                    <span class="rating-emoji">😊</span>
+                    <div class="rating-title">BOM</div>
+                    <div class="rating-description">Atendimento satisfatório</div>
+                </div>
+                <div class="rating-card" data-value="4">
+                    <span class="rating-emoji">🤩</span>
+                    <div class="rating-title">EXCELENTE</div>
+                    <div class="rating-description">Superou expectativas</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="evaluation-section sector-section">
+            <div class="sector-title">Avalie nossos setores</div>
+            
+            <div class="sector-group">
+                <div class="sector-name">🛒 VENDAS</div>
+                <div class="sector-ratings" id="vendasRating">
+                    <button class="sector-rating-btn" data-value="1">Ruim</button>
+                    <button class="sector-rating-btn" data-value="2">Regular</button>
+                    <button class="sector-rating-btn" data-value="3">Bom</button>
+                    <button class="sector-rating-btn" data-value="4">Excelente</button>
+                </div>
+            </div>
+
+            <div class="sector-group">
+                <div class="sector-name">💰 CAIXA</div>
+                <div class="sector-ratings" id="caixaRating">
+                    <button class="sector-rating-btn" data-value="1">Ruim</button>
+                    <button class="sector-rating-btn" data-value="2">Regular</button>
+                    <button class="sector-rating-btn" data-value="3">Bom</button>
+                    <button class="sector-rating-btn" data-value="4">Excelente</button>
+                </div>
+            </div>
+
+            <div class="sector-group">
+                <div class="sector-name">🚚 EXPEDIÇÃO</div>
+                <div class="sector-ratings" id="expedicaoRating">
+                    <button class="sector-rating-btn" data-value="1">Ruim</button>
+                    <button class="sector-rating-btn" data-value="2">Regular</button>
+                    <button class="sector-rating-btn" data-value="3">Bom</button>
+                    <button class="sector-rating-btn" data-value="4">Excelente</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="evaluation-section feedback-section">
+            <div class="feedback-title">Conte-nos mais sobre sua experiência</div>
+            <div class="feedback-subtitle">(Opcional) Relate melhorias ou situações que gostaria de compartilhar</div>
+            <textarea 
+                class="feedback-textarea" 
+                id="feedbackText"
+                placeholder="Descreva sua experiência, sugestões de melhoria ou relate alguma situação específica..."
+                maxlength="1000">
+            </textarea>
+        </div>
+
+        <div class="submit-section">
+            <button class="submit-btn" id="submitBtn" onclick="submitEvaluation()">
+                ✈️ Enviar Avaliação
+            </button>
+        </div>
+
+        <div class="contact-section">
+            <div class="contact-title">Entre em contato conosco</div>
+            <div class="contact-info">
+                <a href="https://instagram.com/grupotelecimento" class="contact-item" target="_blank">
+                    📷 Instagram @grupotelecimento
+                </a>
+                <div class="contact-item">
+                    📍 Endereço: Av. Manoel Caribe Filho, 3325 - Canelas, Montes Claros
+                </div>
+                <a href="https://wa.me/5538932121823" class="contact-item" target="_blank">
+                    📱 WhatsApp: (38) 9 3212-1823
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="message" id="message"></div>
+
+    <script>
+        let selectedRatings = {
+            geral: null,
+            vendas: null,
+            caixa: null,
+            expedicao: null
+        };
+
+        // Configurar seleção de avaliação geral
+        document.getElementById('generalRating').addEventListener('click', function(e) {
+            const card = e.target.closest('.rating-card');
+            if (card) {
+                // Remove seleção anterior
+                document.querySelectorAll('#generalRating .rating-card').forEach(c => c.classList.remove('selected'));
+                // Adiciona seleção atual
+                card.classList.add('selected');
+                selectedRatings.geral = parseInt(card.dataset.value);
+                updateSubmitButton();
+            }
+        });
+
+        // Configurar seleção de avaliação por setores
+        function setupSectorRating(sectorId, ratingKey) {
+            document.getElementById(sectorId).addEventListener('click', function(e) {
+                const btn = e.target.closest('.sector-rating-btn');
+                if (btn) {
+                    // Remove seleção anterior no setor
+                    document.querySelectorAll(`#${sectorId} .sector-rating-btn`).forEach(b => b.classList.remove('selected'));
+                    // Adiciona seleção atual
+                    btn.classList.add('selected');
+                    selectedRatings[ratingKey] = parseInt(btn.dataset.value);
+                }
+            });
+        }
+
+        setupSectorRating('vendasRating', 'vendas');
+        setupSectorRating('caixaRating', 'caixa');
+        setupSectorRating('expedicaoRating', 'expedicao');
+
+        function updateSubmitButton() {
+            const submitBtn = document.getElementById('submitBtn');
+            if (selectedRatings.geral) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+        }
+
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = `message ${type}`;
+            messageEl.classList.add('show');
+            
+            setTimeout(() => {
+                messageEl.classList.remove('show');
+            }, 4000);
+        }
+
+        async function submitEvaluation() {
+            if (!selectedRatings.geral) {
+                showMessage('Por favor, selecione uma avaliação geral antes de enviar.', 'error');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Enviando...';
+
+            const evaluationData = {
+                avaliacao_geral: selectedRatings.geral,
+                avaliacao_vendas: selectedRatings.vendas,
+                avaliacao_caixa: selectedRatings.caixa,
+                avaliacao_expedicao: selectedRatings.expedicao,
+                feedback_textual: document.getElementById('feedbackText').value.trim() || null
+            };
+
+            try {
+                const response = await fetch('/api/avaliar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(evaluationData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showMessage('Avaliação enviada com sucesso! Obrigado pelo seu feedback.', 'success');
+                    
+                    // Reset form
+                    selectedRatings = { geral: null, vendas: null, caixa: null, expedicao: null };
+                    document.querySelectorAll('.rating-card, .sector-rating-btn').forEach(el => el.classList.remove('selected'));
+                    document.getElementById('feedbackText').value = '';
+                    
+                } else {
+                    showMessage(result.error || 'Erro ao enviar avaliação. Tente novamente.', 'error');
+                }
+            } catch (error) {
+                showMessage('Erro de conexão. Verifique sua internet e tente novamente.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '✈️ Enviar Avaliação';
+                updateSubmitButton();
+            }
+        }
+
+        // Inicializar estado do botão
+        updateSubmitButton();
+    </script>
+</body>
+</html>
+
+
